@@ -1,0 +1,93 @@
+import numpy as np
+import random 
+from time import sleep
+
+def create_brd():
+    return (np.array([[0,0,0],
+                      [0,0,0],
+                      [0,0,0]]))
+
+# Coordinates of all empty positions in the board
+def possibilities(board):
+    e = []
+    for i in range(len(board)):
+        for j in range(len(board)):
+            if board[i][j] == 0:
+                e.append((i, j))
+    return e
+
+# Selecting a random place for a player
+def sel_space(board, player):
+    selection = possibilities(board)
+    curr = random.choice(selection)
+    board[curr] = player
+    return board
+
+# Checking if a player has 3 of their marks in a horizontal row
+def row_match(board, player):
+    for i in range(len(board)):
+        win = True
+        for j in range(len(board)):
+            if board[i][j] != player:
+                win = False
+                continue
+        if win == True:
+            return win  
+    return win 
+
+# Checking if a player has 3 of their marks in a vertical row
+def col_match(board, player):
+    for i in range(len(board)):
+        win = True
+        for j in range(len(board)):
+            if board[j][i] != player:
+                win = False
+                continue
+        if win == True:
+            return win  
+    return win
+
+# Checking if a player has 3 of their marks in a diagonal row
+def diagial_match(board, player):
+    win = True
+    j = 0
+    for i in range(len(board)):
+        if board[i][i] != player:
+            win = False
+    if win:
+        return win
+    win = True
+    if win:
+        for i in range(len(board)):
+            j = len(board) - 1 - i 
+            if board[i][j] != player:
+                win = False
+    return win
+
+# Check if there's a winner or it's a tie
+def check(board):
+    winner = 0
+    for player in [1, 2]:
+        if (row_match(board, player) or col_match(board, player) or diagial_match(board, player)):
+            winner = player
+    if np.all(board != 0) and winner == 0:
+        winner = -1
+    return winner 
+
+def play_game():
+    board, winner, counter = create_brd(), 0, 1
+    print(board)
+    sleep(2)
+    while winner == 0:
+        for player in [1, 2]:
+            board = sel_space(board, player)
+            print("board after " + str(counter) + " move")
+            print(board)
+            sleep(2)
+            counter = counter + 1
+            winner = check(board)
+            if winner != 0:
+                break 
+    return winner
+
+print("winner is " + str(play_game()))
